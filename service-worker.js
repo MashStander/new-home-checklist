@@ -1,4 +1,4 @@
-const CACHE_NAME = "home-checklist-v10";
+const CACHE_NAME = "home-checklist-v11";
 
 const ASSETS = [
   "./",
