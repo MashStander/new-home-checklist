@@ -308,6 +308,8 @@ function renderMainListUI(searchQuery) {
                 individualItemRow.style.gap = '10px';
                 individualItemRow.style.padding = '8px 0';
                 individualItemRow.style.borderBottom = '1px solid #f7fafc';
+                individualItemRow.style.textAlign = 'left';
+                individualItemRow.style.direction = 'ltr';
                 if (isCurrentlyChecked) individualItemRow.style.opacity = '0.5';
 
                 individualItemRow.innerHTML = `
