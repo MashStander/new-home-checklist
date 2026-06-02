@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Home Checklist</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fbb719"/>
+
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- App Icons -->
+  <link rel="icon" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+</head>
+
+<body>
+<header class="header">
+  <div class="title">
+    <span class="logo">🏡</span>
+    New Home Checklist
+  </div>
+
+  <div class="progress-summary">
+    <div id="progressText"></div>
+    <div class="progress-bar">
+      <div id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="top-actions">
+    <input id="search" type="text" placeholder="Search items..." />
+    <button id="exportBtn">Export</button>
+    <button id="resetBtn" class="danger">Start Over</button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<section class="removed-section">
+  <h2>Removed Items</h2>
+  <div id="removedItems"></div>
+</section>
+
+<footer>
+  © 2026 M Stander. mash.stander@gmail.com All rights reserved.
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
