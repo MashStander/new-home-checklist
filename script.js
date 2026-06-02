@@ -304,14 +304,14 @@ function renderMainListUI(searchQuery) {
                 const individualItemRow = document.createElement('li');
                 individualItemRow.className = `item-row ${isCurrentlyChecked ? 'completed-faded' : ''}`;
                 individualItemRow.style.display = 'flex';
-                individualItemRow.style.justifyContent = 'space-between';
-                individualItemRow.style.alignItems = 'center';
+                individualItemRow.style.alignItems = 'flex-start';
+                individualItemRow.style.gap = '10px';
                 individualItemRow.style.padding = '8px 0';
                 individualItemRow.style.borderBottom = '1px solid #f7fafc';
                 if (isCurrentlyChecked) individualItemRow.style.opacity = '0.5';
 
                 individualItemRow.innerHTML = `
-                    <div class="item-left-block" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; width:100%;">
+                    <div class="item-left-block" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; flex:1;">
                         <label class="item-main-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; width:100%; font-size:1rem;">
                             <input type="checkbox" class="main-checkbox" data-key="${stateKey}" ${isCurrentlyChecked ? 'checked' : ''} style="width:16px; height:16px;">
                             <span class="text-strike-target" style="${isCurrentlyChecked ? 'text-decoration:line-through; color:#a0aec0;' : ''}">${itemName}</span>
@@ -329,7 +329,7 @@ function renderMainListUI(searchQuery) {
                             </label>
                         </div>
                     </div>
-                    <button class="remove-btn" data-key="${stateKey}" title="Remove Item" style="background:none; border:none; cursor:pointer; font-size:1rem; padding:0 5px;">🗑️</button>
+                    <button class="remove-btn" data-key="${stateKey}" title="Remove Item" style="margin-left:auto; background:none; border:none; cursor:pointer; font-size:1rem; padding:0 5px;">🗑️</button>
                 `;
                 categoricalListContainer.appendChild(individualItemRow);
             });
