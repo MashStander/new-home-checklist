@@ -1,10 +1,9 @@
 /**
- * New Home Checklist - 100% Compliant Production Script
- * Architecture: State-Driven Vanilla JS (No Frameworks)
- * Compliant with: PWA, LocalStorage, Strict Progress Tracking, Soft-Delete/Restore Indexing
+ * New Home Checklist - Tailored Production Script
+ * Architecture: State-Driven Vanilla JS (Matches original template IDs seamlessly)
  */
 
-// 1. EXACT DATA STRUCTURE (Maintains absolute indexing for original positions)
+// 1. EXACT DATA STRUCTURE
 const CHECKLIST_DATA = {
     "Kitchen": {
         "Cookware (Pots & Pans)": [
@@ -151,23 +150,16 @@ const CHECKLIST_DATA = {
     }
 };
 
-// 2. STATE PERSISTENCE MAPS
+// 2. STATE OBJECT
 let appState = {
-    checked: {},    // "Room||Category||Item" -> boolean
-    removed: {},    // "Room||Category||Item" -> boolean
-    collapsed: {}   // "Room" -> boolean (Defaults false = Expanded)
+    checked: {},    
+    removed: {},    
+    collapsed: {}   
 };
 
-// 3. INITIALIZATION
+// 3. INITIALIZE
 document.addEventListener('DOMContentLoaded', () => {
-    initLocalStorage();
-    renderAll();
-    setupEvents();
-    injectFooter();
-});
-
-function initLocalStorage() {
-    const data = localStorage.getItem('new_home_checklist_pwa_data');
+    const data = localStorage.getItem('new_home_checklist_data');
     if (data) {
         try {
             appState = JSON.parse(data);
@@ -175,24 +167,26 @@ function initLocalStorage() {
             if (!appState.removed) appState.removed = {};
             if (!appState.collapsed) appState.collapsed = {};
         } catch (e) {
-            console.error("State clean reset forced.", e);
+            console.error("State parse reset.", e);
         }
     }
-}
+    renderAll();
+    setupEvents();
+});
 
 function saveState() {
-    localStorage.setItem('new_home_checklist_pwa_data', JSON.stringify(appState));
+    localStorage.setItem('new_home_checklist_data', JSON.stringify(appState));
 }
 
-// 4. RENDERING PIPELINE
+// 4. RENDERING ENGINE
 function renderAll() {
-    const searchVal = document.getElementById('search-bar')?.value.toLowerCase().trim() || '';
+    const searchVal = document.getElementById('search')?.value.toLowerCase().trim() || '';
     renderTopStats();
     renderMainChecklist(searchVal);
     renderRemovedSection();
 }
 
-// Top Status Panel Display
+// Renders Header Info Dashboard
 function renderTopStats() {
     let total = 0, checked = 0;
 
@@ -211,34 +205,28 @@ function renderTopStats() {
     const remaining = total - checked;
     const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
 
-    const statsHeader = document.getElementById('top-stats-container');
-    if (statsHeader) {
-        statsHeader.innerHTML = `
-            <div class="stats-card">
-                <div class="stats-grid">
-                    <div><strong>Total Items:</strong> <span>${total}</span></div>
-                    <div><strong>Completed:</strong> <span>${checked}</span></div>
-                    <div><strong>Remaining:</strong> <span>${remaining}</span></div>
-                    <div><strong>Progress:</strong> <span>${percent}%</span></div>
-                </div>
-                <div class="global-progress-bar-bg">
-                    <div class="global-progress-bar-fill" style="width: ${percent}%;"></div>
-                </div>
-            </div>
-        `;
+    // Plugs directly into your <div id="progressText"></div>
+    const txtBox = document.getElementById('progressText');
+    if (txtBox) {
+        txtBox.innerHTML = `Items: ${checked}/${total} Complete (${percent}%) | Remaining: ${remaining}`;
+    }
+
+    // Plugs directly into your <div id="progressFill"></div>
+    const fillBar = document.getElementById('progressFill');
+    if (fillBar) {
+        fillBar.style.width = `${percent}%`;
     }
 }
 
-// Main Checklist Generator
+// Renders the main App body dynamically
 function renderMainChecklist(searchQuery) {
-    const mainContainer = document.getElementById('checklist-container');
-    if (!mainContainer) return;
-    mainContainer.innerHTML = '';
+    const appContainer = document.getElementById('app');
+    if (!appContainer) return;
+    appContainer.innerHTML = '';
 
     for (const [roomName, categories] of Object.entries(CHECKLIST_DATA)) {
         let roomTotal = 0, roomChecked = 0, matchesSearch = false;
 
-        // Count metrics for heading directly
         for (const [cat, items] of Object.entries(categories)) {
             items.forEach(item => {
                 const key = `${roomName}||${cat}||${item}`;
@@ -252,7 +240,7 @@ function renderMainChecklist(searchQuery) {
             });
         }
 
-        if (searchQuery && !matchesSearch) continue; // Skip non-matching rooms during search
+        if (searchQuery && !matchesSearch) continue;
 
         const isCollapsed = !!appState.collapsed[roomName];
         const roomPercent = roomTotal > 0 ? Math.round((roomChecked / roomTotal) * 100) : 0;
@@ -261,11 +249,11 @@ function renderMainChecklist(searchQuery) {
         roomSec.className = `room-card ${isCollapsed ? 'collapsed' : ''}`;
         
         roomSec.innerHTML = `
-            <div class="room-heading-wrapper" data-room="${roomName}">
+            <div class="room-heading-wrapper" data-room="${roomName}" style="cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
                 <h2>${roomName} (${roomChecked}/${roomTotal} complete — ${roomPercent}%)</h2>
-                <span class="toggle-icon">${isCollapsed ? '＋' : '－'}</span>
+                <span class="toggle-icon" style="font-weight:bold; font-size:1.2rem;">${isCollapsed ? '＋' : '－'}</span>
             </div>
-            <div class="room-content" style="display: ${isCollapsed ? 'none' : 'block'};">
+            <div class="room-content" style="display: ${isCollapsed ? 'none' : 'block'}; margin-top:15px;">
                 <div class="categories-grid"></div>
             </div>
         `;
@@ -276,12 +264,12 @@ function renderMainChecklist(searchQuery) {
             let catHasItems = false;
             const catBox = document.createElement('div');
             catBox.className = 'category-card';
-            catBox.innerHTML = `<h3>${categoryName}</h3><ul class="items-list"></ul>`;
+            catBox.innerHTML = `<h3 style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">${categoryName}</h3><ul class="items-list" style="list-style:none; padding:0;"></ul>`;
             const ul = catBox.querySelector('ul');
 
             items.forEach(itemName => {
                 const key = `${roomName}||${categoryName}||${itemName}`;
-                if (appState.removed[key]) return; // Skip if sent to bottom section
+                if (appState.removed[key]) return;
 
                 if (searchQuery && !itemName.toLowerCase().includes(searchQuery) && !categoryName.toLowerCase().includes(searchQuery)) {
                     return;
@@ -292,12 +280,17 @@ function renderMainChecklist(searchQuery) {
 
                 const li = document.createElement('li');
                 li.className = `item-row ${isChecked ? 'completed-faded' : ''}`;
+                li.style.display = "flex";
+                li.style.justifyContent = "space-between";
+                li.style.alignItems = "center";
+                li.style.padding = "6px 0";
+
                 li.innerHTML = `
-                    <label class="item-label">
+                    <label style="display:flex; align-items:center; gap:10px; width:100%; cursor:pointer;">
                         <input type="checkbox" data-key="${key}" ${isChecked ? 'checked' : ''}>
-                        <span class="item-text text-strike-target">${itemName}</span>
+                        <span class="text-strike-target">${itemName}</span>
                     </label>
-                    <button class="action-btn remove-btn" data-key="${key}" title="Remove Item">🗑️</button>
+                    <button class="remove-btn" data-key="${key}" style="background:none; border:none; cursor:pointer; font-size:1.1rem;" title="Remove Item">🗑️</button>
                 `;
                 ul.appendChild(li);
             });
@@ -305,26 +298,20 @@ function renderMainChecklist(searchQuery) {
             if (catHasItems) grid.appendChild(catBox);
         }
 
-        mainContainer.appendChild(roomSec);
+        appContainer.appendChild(roomSec);
     }
 }
 
-// Dedicated Bottom "Removed Items" Section
+// Plugs directly into your bottom <div id="removedItems"></div>
 function renderRemovedSection() {
-    let removedContainer = document.getElementById('removed-items-container');
-    if (!removedContainer) {
-        removedContainer = document.createElement('div');
-        removedContainer.id = 'removed-items-container';
-        document.getElementById('checklist-container').after(removedContainer);
-    }
-
-    removedContainer.innerHTML = '';
+    const remContainer = document.getElementById('removedItems');
+    if (!remContainer) return;
+    remContainer.innerHTML = '';
+    
     let hasRemoved = false;
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'removed-section-card';
-    wrapper.innerHTML = `<h2>Removed Items</h2><ul class="removed-list"></ul>`;
-    const ul = wrapper.querySelector('ul');
+    const ul = document.createElement('ul');
+    ul.style.listStyle = "none";
+    ul.style.padding = "0";
 
     for (const [room, categories] of Object.entries(CHECKLIST_DATA)) {
         for (const [cat, items] of Object.entries(categories)) {
@@ -336,12 +323,19 @@ function renderRemovedSection() {
 
                     const li = document.createElement('li');
                     li.className = 'item-row removed-greyed-out';
+                    li.style.display = "flex";
+                    li.style.justifyContent = "space-between";
+                    li.style.alignItems = "center";
+                    li.style.padding = "8px";
+                    li.style.marginBottom = "5px";
+                    li.style.borderRadius = "4px";
+
                     li.innerHTML = `
-                        <label class="item-label">
+                        <label style="display:flex; align-items:center; gap:10px;">
                             <input type="checkbox" data-key="${key}" ${isChecked ? 'checked' : ''}>
-                            <span class="item-text ${isChecked ? 'text-strike-target' : ''}">[${room} → ${cat}] ${item}</span>
+                            <span class="${isChecked ? 'text-strike-target' : ''}"><strong>[${room}]</strong> ${item}</span>
                         </label>
-                        <button class="action-btn restore-btn" data-key="${key}">Restore</button>
+                        <button class="restore-btn" data-key="${key}" style="background:#e0e0e0; border:none; border-radius:4px; padding:4px 8px; cursor:pointer; font-size:0.85rem;">Restore</button>
                     `;
                     ul.appendChild(li);
                 }
@@ -350,16 +344,18 @@ function renderRemovedSection() {
     }
 
     if (hasRemoved) {
-        removedContainer.appendChild(wrapper);
+        remContainer.appendChild(ul);
+    } else {
+        remContainer.innerHTML = '<p style="color:#888; font-style:italic;">No removed items.</p>';
     }
 }
 
-// 5. INTERACTION CONTROLLER
+// 5. EVENTS CONTROLLER
 function setupEvents() {
-    const container = document.body;
+    const body = document.body;
 
-    // Checkbox State Toggles
-    container.addEventListener('change', (e) => {
+    // Checkbox toggling
+    body.addEventListener('change', (e) => {
         if (e.target.matches('input[type="checkbox"]')) {
             const key = e.target.getAttribute('data-key');
             appState.checked[key] = e.target.checked;
@@ -368,8 +364,8 @@ function setupEvents() {
         }
     });
 
-    // Remove & Restore Button Interception
-    container.addEventListener('click', (e) => {
+    // Clicks on interactive items
+    body.addEventListener('click', (e) => {
         if (e.target.matches('.remove-btn')) {
             const key = e.target.getAttribute('data-key');
             appState.removed[key] = true;
@@ -378,105 +374,93 @@ function setupEvents() {
         } 
         else if (e.target.matches('.restore-btn')) {
             const key = e.target.getAttribute('data-key');
-            appState.removed[key] = false; // Directly mapping index back to original room node position
+            appState.removed[key] = false;
             saveState();
             renderAll();
         }
-        // Collapsible Heading Handler
         else if (e.target.closest('.room-heading-wrapper')) {
-            const heading = e.target.closest('.room-heading-wrapper');
-            const roomName = heading.getAttribute('data-room');
-            appState.collapsed[roomName] = !appState.collapsed[roomName];
+            const wrap = e.target.closest('.room-heading-wrapper');
+            const room = wrap.getAttribute('data-room');
+            appState.collapsed[room] = !appState.collapsed[room];
             saveState();
             renderAll();
         }
     });
 
-    // Search Filtering
-    document.getElementById('search-bar')?.addEventListener('input', () => {
+    // Real-time Search Input Linking
+    document.getElementById('search')?.addEventListener('input', () => {
         renderAll();
     });
 
-    // Prominent Start Over Reset Button
-    document.getElementById('btn-start-over')?.addEventListener('click', () => {
+    // "Start Over" confirmation hook
+    document.getElementById('resetBtn')?.addEventListener('click', () => {
         if (confirm("Are you sure you want to completely uncheck all items, restore all removed items, and expand all sections?")) {
             appState.checked = {};
             appState.removed = {};
-            appState.collapsed = {}; // Expand all sections
+            appState.collapsed = {}; 
             saveState();
-            const searchBar = document.getElementById('search-bar');
-            if (searchBar) searchBar.value = ''; 
+            const sInput = document.getElementById('search');
+            if (sInput) sInput.value = '';
             renderAll();
         }
     });
 
-    // Printable Summary / Export Page Configuration Generator
-    document.getElementById('btn-export')?.addEventListener('click', () => {
-        let printWindow = window.open('', '_blank');
-        let htmlStr = `
+    // Export printable document builder summary hook
+    document.getElementById('exportBtn')?.addEventListener('click', () => {
+        let pWin = window.open('', '_blank');
+        let html = `
             <html>
             <head>
                 <title>New Home Checklist - Export Summary</title>
                 <style>
-                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 30px; color: #333; }
-                    h1 { color: #2c3e50; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
-                    h2 { color: #16a085; margin-top: 20px; }
+                    body { font-family: -apple-system, sans-serif; padding: 30px; color: #333; }
+                    h1 { color: #2c3e50; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+                    h2 { color: #16a085; margin-top: 25px; border-bottom: 1px solid #f5f5f5; }
                     ul { list-style: none; padding: 0; }
-                    li { padding: 6px 0; border-bottom: 1px solid #f2f2f2; }
-                    .strike { text-decoration: line-through; color: #7f8c8d; }
-                    .removed { color: #c0392b; font-style: italic; }
+                    li { padding: 6px 0; border-bottom: 1px solid #f9f9f9; }
+                    .strike { text-decoration: line-through; color: #95a5a6; }
+                    .rem { color: #c0392b; font-style: italic; }
                 </style>
             </head>
             <body>
                 <h1>New Home Checklist Summary Page</h1>
-                <p>Generated on: ${new Date().toLocaleDateString()}</p>
+                <p>Generated: ${new Date().toLocaleDateString()}</p>
         `;
 
         let checkedHtml = '<h2>Checked Items</h2><ul>';
         let uncheckedHtml = '<h2>Unchecked Items</h2><ul>';
         let removedHtml = '<h2>Removed Items</h2><ul>';
 
-        let cCount = 0, uCount = 0, rCount = 0;
+        let c = 0, u = 0, r = 0;
 
         for (const [room, categories] of Object.entries(CHECKLIST_DATA)) {
             for (const [cat, items] of Object.entries(categories)) {
                 items.forEach(item => {
                     const key = `${room}||${cat}||${item}`;
-                    const displayLabel = `<li><strong>[${room}]</strong> ${item}</li>`;
-                    
                     if (appState.removed[key]) {
-                        removedHtml += `<li><span class="removed"><strong>[${room}]</strong> ${item} (Removed)</span></li>`;
-                        rCount++;
+                        removedHtml += `<li><span class="rem"><strong>[${room}]</strong> ${item}</span></li>`;
+                        r++;
                     } else if (appState.checked[key]) {
                         checkedHtml += `<li><span class="strike"><strong>[${room}]</strong> ${item}</span></li>`;
-                        cCount++;
+                        c++;
                     } else {
-                        uncheckedHtml += displayLabel;
-                        uCount++;
+                        uncheckedHtml += `<li><strong>[${room}]</strong> ${item}</li>`;
+                        u++;
                     }
                 });
             }
         }
 
-        checkedHtml += cCount === 0 ? '<li>None</li></ul>' : '</ul>';
-        uncheckedHtml += uCount === 0 ? '<li>None</li></ul>' : '</ul>';
-        removedHtml += rCount === 0 ? '<li>None</li></ul>' : '</ul>';
+        checkedHtml += c === 0 ? '<li>None</li></ul>' : '</ul>';
+        uncheckedHtml += u === 0 ? '<li>None</li></ul>' : '</ul>';
+        removedHtml += r === 0 ? '<li>None</li></ul>' : '</ul>';
 
-        htmlStr += checkedHtml + uncheckedHtml + removedHtml + `
+        html += checkedHtml + uncheckedHtml + removedHtml + `
             <script>window.print();<\/script>
             </body>
             </html>
         `;
-
-        printWindow.document.write(htmlStr);
-        printWindow.document.close();
+        pWin.document.write(html);
+        pWin.document.close();
     });
-}
-
-// Global Static Footer Injector
-function injectFooter() {
-    const footer = document.querySelector('footer');
-    if (footer) {
-        footer.innerHTML = `<p>© 2026 M Stander. mash.stander@gmail.com All rights reserved.</p>`;
-    }
 }
