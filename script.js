@@ -312,7 +312,7 @@ function renderMainListUI(searchQuery) {
 
                 individualItemRow.innerHTML = `
                     <div class="item-left-block" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; flex:1;">
-                        <label class="item-main-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; width:100%; font-size:1rem;">
+                        <label class="item-main-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:1rem;">
                             <input type="checkbox" class="main-checkbox" data-key="${stateKey}" ${isCurrentlyChecked ? 'checked' : ''} style="width:16px; height:16px;">
                             <span class="text-strike-target" style="${isCurrentlyChecked ? 'text-decoration:line-through; color:#a0aec0;' : ''}">${itemName}</span>
                         </label>
