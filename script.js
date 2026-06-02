@@ -1,7 +1,7 @@
 /**
- * New Home Checklist - Complete Production Master Script
+ * New Home Checklist - Resilient Production Master Script
  * Built Custom for MashStander Template Structure
- * Features: Absolute index recovery mapping, left-aligned layout defaults, Product URL binding, "Or similar product" states.
+ * Features: Auto-detecting layout bindings, Left-aligned defaults, Product URL links, "Or similar product" states.
  */
 
 // 1. EXACT DATA MAP STRUCTURE (Direct from Github File LIST FINAL.docx)
@@ -221,10 +221,22 @@ function renderDashboardMetrics() {
 }
 
 function renderMainListUI(searchQuery) {
-    // Crucial Template Bind Alignment Fix: Your HTML uses 'removedItems' below, but the main app is drawn into standard 'removedItems' neighbors
-    // Let's dynamically look for your main structural layout fallback elements
-    let mainAppContainer = document.getElementById('app') || document.getElementById('checklist');
-    if (!mainAppContainer) return;
+    // FAILSAFE CONTAINER FINDER: Checks for 'checklist', 'app', or creates a placeholder right before the removed items section!
+    let mainAppContainer = document.getElementById('checklist') || document.getElementById('app');
+    
+    if (!mainAppContainer) {
+        const removedSection = document.getElementById('removedItems');
+        if (removedSection) {
+            mainAppContainer = document.createElement('div');
+            mainAppContainer.id = 'checklist';
+            mainAppContainer.style.width = '100%';
+            mainAppContainer.style.marginBottom = '30px';
+            removedSection.parentNode.insertBefore(mainAppContainer, removedSection);
+        } else {
+            return; // Absolute fallback protection
+        }
+    }
+    
     mainAppContainer.innerHTML = '';
 
     for (const [roomName, categories] of Object.entries(CHECKLIST_DATA)) {
@@ -250,11 +262,16 @@ function renderMainListUI(searchQuery) {
 
         const functionalRoomCard = document.createElement('section');
         functionalRoomCard.className = `room-card ${sectionCollapsedState ? 'collapsed' : ''}`;
+        functionalRoomCard.style.background = '#ffffff';
+        functionalRoomCard.style.padding = '20px';
+        functionalRoomCard.style.borderRadius = '8px';
+        functionalRoomCard.style.marginBottom = '20px';
+        functionalRoomCard.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
         
         functionalRoomCard.innerHTML = `
-            <div class="room-heading-wrapper" data-room="${roomName}">
-                <h2>${roomName} (${roomChecked}/${roomTotal} complete — ${currentRoomPercentage}%)</h2>
-                <span class="toggle-icon">${sectionCollapsedState ? '＋' : '－'}</span>
+            <div class="room-heading-wrapper" data-room="${roomName}" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
+                <h2 style="margin:0; font-size:1.3rem; font-weight:bold;">${roomName} (${roomChecked}/${roomTotal} complete — ${currentRoomPercentage}%)</h2>
+                <span class="toggle-icon" style="font-size:1.2rem; font-weight:bold;">${sectionCollapsedState ? '＋' : '－'}</span>
             </div>
             <div class="room-content" style="display: ${sectionCollapsedState ? 'none' : 'block'}; margin-top:15px;">
                 <div class="categories-grid"></div>
@@ -267,7 +284,8 @@ function renderMainListUI(searchQuery) {
             let columnHasValidVisibleItems = false;
             const singleCategoryCard = document.createElement('div');
             singleCategoryCard.className = 'category-card';
-            singleCategoryCard.innerHTML = `<h3>${categoryName}</h3><ul class="items-list"></ul>`;
+            singleCategoryCard.style.marginBottom = '15px';
+            singleCategoryCard.innerHTML = `<h3 style="font-size:1.05rem; color:#4a5568; border-bottom:1px solid #edf2f7; padding-bottom:5px; margin-bottom:10px;">${categoryName}</h3><ul class="items-list" style="list-style:none; padding:0; margin:0;"></ul>`;
             const categoricalListContainer = singleCategoryCard.querySelector('ul');
 
             items.forEach(itemName => {
@@ -285,27 +303,33 @@ function renderMainListUI(searchQuery) {
 
                 const individualItemRow = document.createElement('li');
                 individualItemRow.className = `item-row ${isCurrentlyChecked ? 'completed-faded' : ''}`;
+                individualItemRow.style.display = 'flex';
+                individualItemRow.style.justifyContent = 'space-between';
+                individualItemRow.style.alignItems = 'center';
+                individualItemRow.style.padding = '8px 0';
+                individualItemRow.style.borderBottom = '1px solid #f7fafc';
+                if (isCurrentlyChecked) individualItemRow.style.opacity = '0.5';
 
                 individualItemRow.innerHTML = `
-                    <div class="item-left-block">
-                        <label class="item-main-label">
-                            <input type="checkbox" class="main-checkbox" data-key="${stateKey}" ${isCurrentlyChecked ? 'checked' : ''}>
-                            <span class="text-strike-target">${itemName}</span>
+                    <div class="item-left-block" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; width:100%;">
+                        <label class="item-main-label" style="display:flex; align-items:center; gap:10px; cursor:pointer; width:100%; font-size:1rem;">
+                            <input type="checkbox" class="main-checkbox" data-key="${stateKey}" ${isCurrentlyChecked ? 'checked' : ''} style="width:16px; height:16px;">
+                            <span class="text-strike-target" style="${isCurrentlyChecked ? 'text-decoration:line-through; color:#a0aec0;' : ''}">${itemName}</span>
                         </label>
                         
-                        <div class="item-controls">
-                            <button class="link-edit-btn ${tiedUrl ? 'has-link' : ''}" data-key="${stateKey}">
+                        <div class="item-controls" style="display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-left:26px; margin-top:2px;">
+                            <button class="link-edit-btn ${tiedUrl ? 'has-link' : ''}" data-key="${stateKey}" style="background:${tiedUrl ? '#e8f4fd' : '#f1f2f6'}; border:1px solid ${tiedUrl ? '#3498db' : '#ced6e0'}; color:${tiedUrl ? '#2980b9' : '#57606f'}; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; font-weight:${tiedUrl ? 'bold' : 'normal'}">
                                 🔗 ${tiedUrl ? 'Link Added' : 'Add Link'}
                             </button>
-                            ${tiedUrl ? `<a href="${tiedUrl}" target="_blank" class="link-visit-anchor">Visit</a>` : ''}
+                            ${tiedUrl ? `<a href="${tiedUrl}" target="_blank" class="link-visit-anchor" style="font-size:0.75rem; color:#3498db; text-decoration:underline;">Visit</a>` : ''}
 
-                            <label class="similar-toggle-label">
-                                <input type="checkbox" class="similar-checkbox" data-key="${stateKey}" ${isSimilarToggled ? 'checked' : ''}>
+                            <label class="similar-toggle-label" style="display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-size:0.75rem; color:#7f8c8d;">
+                                <input type="checkbox" class="similar-checkbox" data-key="${stateKey}" ${isSimilarToggled ? 'checked' : ''} style="width:12px; height:12px;">
                                 <span class="similar-text">Or similar product</span>
                             </label>
                         </div>
                     </div>
-                    <button class="remove-btn" data-key="${stateKey}" title="Remove Item">🗑️</button>
+                    <button class="remove-btn" data-key="${stateKey}" title="Remove Item" style="background:none; border:none; cursor:pointer; font-size:1rem; padding:0 5px;">🗑️</button>
                 `;
                 categoricalListContainer.appendChild(individualItemRow);
             });
@@ -324,7 +348,9 @@ function renderTrashSectionUI() {
     
     let hasRemovedRowsPresent = false;
     const historicalListRootNode = document.createElement('ul');
-    historicalListRootNode.className = "removed-items-list-wrapper";
+    historicalListRootNode.style.listStyle = 'none';
+    historicalListRootNode.style.padding = '0';
+    historicalListRootNode.style.margin = '10px 0 0 0';
 
     for (const [room, categories] of Object.entries(CHECKLIST_DATA)) {
         for (const [cat, items] of Object.entries(categories)) {
@@ -335,14 +361,19 @@ function renderTrashSectionUI() {
                     const nestedCheckState = !!appState.checked[stateKey];
 
                     const removedListItemRow = document.createElement('li');
-                    removedListItemRow.className = 'item-row removed-greyed-out';
+                    removedListItemRow.style.display = 'flex';
+                    removedListItemRow.style.justifyContent = 'space-between';
+                    removedListItemRow.style.alignItems = 'center';
+                    removedListItemRow.style.padding = '6px 0';
+                    removedListItemRow.style.borderBottom = '1px solid #edf2f7';
+                    removedListItemRow.style.color = '#a0aec0';
 
                     removedListItemRow.innerHTML = `
-                        <label class="removed-item-label-layout">
-                            <input type="checkbox" data-key="${stateKey}" ${nestedCheckState ? 'checked' : ''}>
-                            <span class="${nestedCheckState ? 'text-strike-target' : ''}"><strong>[${room}]</strong> ${item}</span>
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" data-key="${stateKey}" ${nestedCheckState ? 'checked' : ''} style="width:14px; height:14px;">
+                            <span style="${nestedCheckState ? 'text-decoration:line-through;' : ''}"><strong>[${room}]</strong> ${item}</span>
                         </label>
-                        <button class="restore-btn" data-key="${stateKey}">Restore</button>
+                        <button class="restore-btn" data-key="${stateKey}" style="background:#e2e8f0; border:none; border-radius:4px; padding:2px 8px; font-size:0.75rem; cursor:pointer; color:#4a5568;">Restore</button>
                     `;
                     historicalListRootNode.appendChild(removedListItemRow);
                 }
@@ -353,7 +384,7 @@ function renderTrashSectionUI() {
     if (hasRemovedRowsPresent) {
         historicalRemovedSectionContainer.appendChild(historicalListRootNode);
     } else {
-        historicalRemovedSectionContainer.innerHTML = '<p class="empty-removed-text">No removed items.</p>';
+        historicalRemovedSectionContainer.innerHTML = '<p class="empty-removed-text" style="color:#a0aec0; font-style:italic; margin-top:10px;">No removed items.</p>';
     }
 }
 
@@ -363,7 +394,7 @@ function setupEventListeners() {
 
     // Direct Toggles Handlers
     applicationEventScopeRoot.addEventListener('change', (event) => {
-        if (event.target.matches('.main-checkbox') || event.target.matches('.removed-item-label-layout input')) {
+        if (event.target.matches('.main-checkbox') || event.target.closest('#removedItems') && event.target.matches('input[type="checkbox"]')) {
             const stateKey = event.target.getAttribute('data-key');
             appState.checked[stateKey] = event.target.checked;
             saveStateToStorage();
@@ -435,7 +466,7 @@ function setupEventListeners() {
         }
     });
 
-    // Custom Built Printable Context Builder Summary Engine
+    // Custom Built Printable Context Summary Engine
     document.getElementById('exportBtn')?.addEventListener('click', () => {
         let printWindowSandboxNode = window.open('', '_blank');
         let rawExportDocumentHtmlString = `
@@ -476,4 +507,26 @@ function setupEventListeners() {
                         removedHtml += `<li><span class="rem"><strong>[${room}]</strong> ${item}</span></li>`;
                         rCount++;
                     } else if (appState.checked[stateKey]) {
-                        checkedHtml += `<li><span class="strike"><strong>[${room}]</strong> ${item}</span>${customRendered
+                        checkedHtml += `<li><span class="strike"><strong>[${room}]</strong> ${item}</span>${customRenderedLinkSegment}${customRenderedSimilarSegment}</li>`;
+                        cCount++;
+                    } else {
+                        uncheckedHtml += `<li><strong>[${room}]</strong> ${item}${customRenderedLinkSegment}${customRenderedSimilarSegment}</li>`;
+                        uCount++;
+                    }
+                });
+            }
+        }
+
+        checkedHtml += cCount === 0 ? '<li>None</li></ul>' : '</ul>';
+        uncheckedHtml += uCount === 0 ? '<li>None</li></ul>' : '</ul>';
+        removedHtml += rCount === 0 ? '<li>None</li></ul>' : '</ul>';
+
+        rawExportDocumentHtmlString += checkedHtml + uncheckedHtml + removedHtml + `
+            <script>window.print();<\/script>
+            </body>
+            </html>
+        `;
+        printWindowSandboxNode.document.write(rawExportDocumentHtmlString);
+        printWindowSandboxNode.document.close();
+    });
+}
