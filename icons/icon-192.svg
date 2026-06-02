@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="32" fill="#fbb719"/>
-  <path d="M96 155c-6-4-44-28-61-52-20-28-10-63 21-72 17-5 33 2 40 15 7-13 23-20 40-15 31 9 41 44 21 72-17 24-55 48-61 52z" fill="#c80e68"/>
-  <path d="M75 95l12 12 30-30" fill="none" stroke="#03989e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
