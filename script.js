@@ -316,7 +316,7 @@ function renderMainListUI(searchQuery) {
                     <div class="item-left-block" style="display:flex; flex-direction:column; align-items:flex-start; gap:4px; flex:1;">
                         <label class="item-main-label" style="display:flex; align-items:center; justify-content:flex-start; gap:10px; cursor:pointer; font-size:1rem; width:100%;">
                             <input type="checkbox" class="main-checkbox" data-key="${stateKey}" ${isCurrentlyChecked ? 'checked' : ''} style="width:16px; height:16px;">
-                            <span class="text-strike-target" style="text-align:left; flex:1; ${isCurrentlyChecked ? 'text-decoration:line-through; color:#a0aec0;' : ''}">${itemName}</span>
+                           <span class="text-strike-target" style="text-align:left; flex:1; ${isCurrentlyChecked ? 'text-decoration:line-through; color:#a0aec0;' : ''}">${itemName}</span>
                         
                         <div class="item-controls" style="display:flex; align-items:center; flex-wrap:wrap; gap:12px; margin-left:26px; margin-top:2px;">
                             <button class="link-edit-btn ${tiedUrl ? 'has-link' : ''}" data-key="${stateKey}" style="background:${tiedUrl ? '#e8f4fd' : '#f1f2f6'}; border:1px solid ${tiedUrl ? '#3498db' : '#ced6e0'}; color:${tiedUrl ? '#2980b9' : '#57606f'}; border-radius:4px; padding:2px 6px; font-size:0.75rem; cursor:pointer; font-weight:${tiedUrl ? 'bold' : 'normal'}">
