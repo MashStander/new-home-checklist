@@ -1,7 +1,7 @@
 :root {
-  --yellow: #fbb719;
-  --pink: #c80e68;
-  --teal: #03989e;
+  --yellow: #ffeebc;
+  --pink: #f5b3dc;
+  --teal: #b8e1e1;
   --bg: #f7f7fb;
   --card: #ffffff;
 }
@@ -42,10 +42,11 @@ button {
   border-radius: 8px;
   cursor: pointer;
   background: var(--teal);
-  color: white;
+  color: #222;
 }
 button.danger {
   background: var(--pink);
+  color: #222;
 }
 .progress-bar {
   height: 10px;
