@@ -4,49 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>New Home Checklist</title>
-
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#fbb719"/>
-
+  <meta name="theme-color" content="#4197aa"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="manifest" href="site.webmanifest">
   <link rel="stylesheet" href="styles.css"/>
-
-  <!-- App Icons -->
-  <link rel="icon" href="icons/3.png">
-<link rel="apple-touch-icon" href="icons/3.png">
 </head>
-
 <body>
 <header class="header">
   <div class="title">
-    <img src="icons/3.png" alt="Home" style="width:28px; height:28px;">
+    <img src="favicon-32x32.png" alt="Home" style="width:28px; height:28px;">
     New Home Checklist
   </div>
-
   <div class="progress-summary">
     <div id="progressText"></div>
     <div class="progress-bar">
       <div id="progressFill"></div>
     </div>
   </div>
-
   <div class="top-actions">
     <input id="search" type="text" placeholder="Search items..." />
     <button id="exportBtn">Export</button>
     <button id="resetBtn" class="danger">Start Over</button>
   </div>
 </header>
-
 <main id="app"></main>
-
 <section class="removed-section">
   <h2>Removed Items</h2>
   <div id="removedItems"></div>
 </section>
-
 <footer>
   © 2026 M Stander. mash.stander@gmail.com All rights reserved.
 </footer>
-
 <script src="script.js"></script>
 </body>
 </html>
