@@ -7,6 +7,10 @@
   --card: #ffffff;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -20,11 +24,13 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 .title {
   font-size: 20px;
   font-weight: bold;
+  color: var(--navy);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -41,6 +47,13 @@ input {
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ddd;
+  color: var(--navy);
+  font-size: 14px;
+}
+
+input:focus {
+  outline: 2px solid var(--teal);
+  border-color: var(--teal);
 }
 
 button {
@@ -50,6 +63,12 @@ button {
   cursor: pointer;
   background: var(--teal);
   color: #ffffff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.88;
 }
 
 button.danger {
@@ -57,11 +76,21 @@ button.danger {
   color: #ffffff;
 }
 
+.progress-summary {
+  margin-top: 8px;
+}
+
+#progressText {
+  font-size: 13px;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
 .progress-bar {
   height: 10px;
-  background: #eee;
+  background: #ddd;
   border-radius: 20px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 #progressFill {
@@ -69,6 +98,7 @@ button.danger {
   background: var(--teal);
   width: 0%;
   border-radius: 20px;
+  transition: width 0.3s ease;
 }
 
 .section {
@@ -84,8 +114,14 @@ button.danger {
   background: var(--almond);
   cursor: pointer;
   font-weight: bold;
+  color: var(--navy);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+}
+
+.section-header:hover {
+  opacity: 0.9;
 }
 
 .item {
@@ -105,6 +141,7 @@ button.danger {
   display: flex;
   gap: 8px;
   align-items: center;
+  margin-left: auto;
 }
 
 .icon-btn {
@@ -112,22 +149,36 @@ button.danger {
   border: none;
   cursor: pointer;
   font-size: 18px;
+  padding: 2px;
+}
+
+.icon-btn:hover {
+  opacity: 0.7;
 }
 
 .remove { color: var(--coral); }
 .restore { color: var(--teal); }
 
 .removed-section {
-  margin: 20px;
-  padding: 10px;
+  margin: 20px 15px;
+  padding: 15px;
   background: var(--card);
   border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.removed-section h2 {
+  color: var(--navy);
+  font-size: 16px;
+  margin-top: 0;
 }
 
 footer {
   text-align: center;
   padding: 20px;
   font-size: 12px;
+  color: var(--navy);
+  opacity: 0.6;
 }
 
 .completed-faded {
@@ -143,7 +194,7 @@ footer {
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   border: 1px solid #eaeaea;
 }
 
@@ -160,12 +211,6 @@ footer {
   padding: 15px;
   text-align: left;
   direction: ltr;
-}
-
-.removed-section {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 2px dashed #ccc;
 }
 
 .removed-greyed-out {
